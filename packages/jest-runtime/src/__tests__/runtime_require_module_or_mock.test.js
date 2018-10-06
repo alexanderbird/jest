@@ -14,6 +14,7 @@ const moduleNameMapper = {
   '^image![a-zA-Z0-9$_-]+$': 'global_image_stub',
   mappedToDirectory: '<rootDir>/MyDirectoryModule',
   mappedToModule: '<rootDir>/TestModuleNameMapperResolution',
+  [/^mappedFromRegExpToModule$/]: '<rootDir>/TestModuleNameMapperResolution',
   mappedToPath: '<rootDir>/global_image_stub.js',
   'module/name/(.*)': '<rootDir>/mapped_module_$1.js',
 };
@@ -118,6 +119,12 @@ it('resolves mapped module names and unmocks them by default', () =>
     exports = runtime.requireModuleOrMock(
       runtime.__mockRootPath,
       'mappedToModule',
+    );
+    expect(exports.moduleNameMapperResolutionWorks).toBe(true);
+
+    exports = runtime.requireModuleOrMock(
+      runtime.__mockRootPath,
+      'mappedFromRegExpToModule',
     );
     expect(exports.moduleNameMapperResolutionWorks).toBe(true);
 
