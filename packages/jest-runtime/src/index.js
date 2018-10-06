@@ -67,6 +67,16 @@ type CacheFS = {[path: Path]: string, __proto__: null};
 
 const NODE_MODULES = path.sep + 'node_modules' + path.sep;
 
+const normalizeRegex = regex => {
+  // When the regex is created by toString()ing a RegExp literal, it includes the surrounding slashes.
+  // The only way to support RegExp literals as config keys, we must strip these slashes
+  const regexWithoutSurroundingSlashes = regex.match(/^\/(.*)\$/);
+  if (regexWithoutSurroundingSlashes) {
+    return new RegExp(regexWithoutSurroundingSlashes[1]);
+  }
+  return new RegExp(regex);
+};
+
 const getModuleNameMapper = (config: ProjectConfig) => {
   if (
     Array.isArray(config.moduleNameMapper) &&
@@ -74,7 +84,7 @@ const getModuleNameMapper = (config: ProjectConfig) => {
   ) {
     return config.moduleNameMapper.map(([regex, moduleName]) => ({
       moduleName,
-      regex: new RegExp(regex),
+      regex: normalizeRegex(regex),
     }));
   }
   return null;
